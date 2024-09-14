@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .contact-form-container{
+            z-index: -1;
+            width: 100%;
+            background-color: rgb(231, 231, 231);
+        }
+        .btn-pink {
+            width: 150px;
+            height: 40px;
+            background-color: #e84949;
+            margin-bottom: 5rem;
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            border-radius: .5rem;
+            color: white;
+            border: none;
+        }
+        .contact-heading{
+            font-size: 5em;
+            color: #e84949;
+            padding-top: 2rem;
+        }
+        .color{
+            color: #343d68aa;
+        }
+        .conatctus-fomr-container{
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .form{
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 70%;
+            margin: 2rem 5rem;
+        }
+        .formfield-container{
+            width: 100%;
+        }
+        .formfield{
+            width: 100%;
+            height: 65px;
+            padding: 0 2rem;
+            font-size: 18px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px #1f1f1f;
+            font-weight: 700;
+            border: none;
+            margin: 17px;
+        }
+        .fomrfiled-textarea{
+            height: auto;
+            padding-top: 1rem;
+        }
+        .submit-btn{
+            border: none;
+            font-size: 1.4rem;
+            margin: 1rem 0;
+        }
+        #submit-btn:hover{
+            transform: scale(0.9);
+        }
+        .submiot-icon{
+            padding: 0 1rem;
+            font-size: 1.5rem;
+        }
+        .checkbox1{
+            width: 100%;
+            height: 42px;
+            padding: 0 2rem;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .dropbtn {
+            background-color: #343d68aa;
+            color: black;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            border-radius: .5rem;
+            width: 100%;
+        }
+        .dropdown {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            padding: 0 2rem;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            max-width: 100%;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {background-color: #ddd;}
+        .dropdown:hover .dropdown-content {display: block; width: 94%;}
+        .dropdown:hover .dropbtn {background-color: #343d68aa;}
+        .button{
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .text{
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-form-container" id="contactme">
+        <div class="container">
+            <h1 class="contact-heading">Book Your  <span class="color"> Appointment</span></h1>
+            <div class="conatctus-fomr-container">
+                <form id="registration-form" class="form">
+                    <div class="formfield-container">
+                        <input type="text" class="formfield" name="phone" placeholder="Enter your phone number (Unique ID)" />
+                        <input type="text" class="formfield" name="name" placeholder="Enter your Name" />
+                        <input type="email" class="formfield" name="email" placeholder="Enter your Email Address" />
+                        <input type="text" class="formfield" name="age" placeholder="Enter your Age" />
+                        <input type="text" class="formfield" name="sex" placeholder="Enter your Sex" />
+                        <input type="text" class="formfield" name="address" placeholder="Enter your City or Address" />
+                        <input type="text" class="formfield" name="department" placeholder="Enter Department" />
+                        <input type="date" class="formfield" name="date" placeholder="Preferred Date of Appointment" />
+
+                        <div class="dropdown">
+                            <button class="dropbtn text">Preferred Time Slot</button>
+                            <div class="dropdown-content">
+                                <a href="#">9:00am - 11:00am</a>
+                                <a href="#">11:00am - 1:00pm</a>
+                                <a href="#">2:00pm - 4:00pm</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button">
+                        <button type="submit" class="btn-pink" id="submit-btn"> Submit Form <i class="submiot-icon fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Include SheetJS library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.getElementById('registration-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(event.target);
+            const data = {};
+            formData.forEach((value, key) => { data[key] = value; });
+
+            // Create a new workbook and worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet([data]);
+            
+            // Check if the Excel file already exists (using local storage for this example)
+            let existingData = [];
+            if (localStorage.getItem('excelData')) {
+                existingData = JSON.parse(localStorage.getItem('excelData'));
+            }
+            existingData.push(data);
+            
+            // Save data to local storage
+            localStorage.setItem('excelData', JSON.stringify(existingData));
+
+            // Create worksheet from existing data
+            const wsExisting = XLSX.utils.json_to_sheet(existingData);
+            XLSX.utils.book_append_sheet(wb, wsExisting, 'Sheet1');
+
+            // Write to Excel file and trigger download
+            XLSX.writeFile(wb, 'PatientRegistration.xlsx');
+        });
+    </script>
+</body>
+</html>
